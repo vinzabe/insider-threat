@@ -100,3 +100,7 @@ The package is built around three principles:
 Email vinzabe@users.noreply.github.com with affected file/line, repro
 steps, and suggested mitigation.  Do not file public issues for
 vulnerabilities.
+
+## Contact
+
+Responsible disclosure: **g@abejar.net**
