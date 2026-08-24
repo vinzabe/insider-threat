@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "insider-threat"
+version = "1.0.0"
+description = "Behavioural baseline engine for insider-risk: per-user and peer-group baselines with explicit warm-up, deviation scoring that always carries a human-readable explanation, and guardrails (review-required, no automated adverse action) designed in."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "vinzabe", email = "gabejar@usa.com" }]
+keywords = ["security", "insider-threat", "ueba", "anomaly-detection", "behavioural-analytics"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Information Technology",
+  "Topic :: Security",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-cov", "hypothesis>=6", "mypy>=1.8", "ruff>=0.5"]
+
+[project.scripts]
+insider = "insider.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/vinzabe/insider-threat"
+Issues = "https://github.com/vinzabe/insider-threat/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/insider"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "."]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+mypy_path = "src"
+packages = ["insider"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ARG"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E402", "S101", "ARG001", "ARG002", "ARG005", "F841"]

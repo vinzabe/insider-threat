@@ -1,0 +1,39 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install -e ".[dev]"
+      - name: ruff
+        run: ruff check src tests
+      - name: mypy (strict)
+        run: mypy --strict src/insider
+      - name: tests + coverage
+        run: pytest --cov=insider --cov-report=term-missing --cov-fail-under=85
+
+  demo-assess:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: python -m pip install -e .
+      - name: assess a synthetic normal log (should not elevate)
+        run: |
+          python - <<'PY'
+          import json
+          json.dump([{"user":"a","group":"g","features":{"x":5}} for _ in range(20)],
+                    open("/tmp/ev.json","w"))
+          PY
+          python -m insider assess /tmp/ev.json --warmup 10
